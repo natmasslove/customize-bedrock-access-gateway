@@ -50,9 +50,8 @@ bedrock_runtime = boto3.client(
 SUPPORTED_BEDROCK_EMBEDDING_MODELS = {
     "cohere.embed-multilingual-v3": "Cohere Embed Multilingual",
     "cohere.embed-english-v3": "Cohere Embed English",
-    # Disable Titan embedding.
-    # "amazon.titan-embed-text-v1": "Titan Embeddings G1 - Text",
-    # "amazon.titan-embed-image-v1": "Titan Multimodal Embeddings G1"
+    "amazon.titan-embed-text-v1": "Titan Embeddings G1 - Text",
+    "amazon.titan-embed-image-v1": "Titan Multimodal Embeddings G1"
 }
 
 ENCODER = tiktoken.get_encoding("cl100k_base")
@@ -61,18 +60,51 @@ ENCODER = tiktoken.get_encoding("cl100k_base")
 class BedrockModel(BaseChatModel):
     # https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html#conversation-inference-supported-models-features
     _supported_models = {
-        "amazon.titan-text-premier-v1:0": {
+        "eu.meta.llama3-2-1b-instruct-v1:0": {
             "system": True,
             "multimodal": False,
             "tool_call": False,
             "stream_tool_call": False,
         },
-        "anthropic.claude-instant-v1": {
+        "eu.meta.llama3-2-3b-instruct-v1:0": {
             "system": True,
             "multimodal": False,
             "tool_call": False,
             "stream_tool_call": False,
+        }, 
+
+
+        "amazon.titan-text-lite-v1": {
+            "system": True,
+            "multimodal": False,
+            "tool_call": False,
+            "stream_tool_call": False,
+        },        
+        "amazon.titan-text-express-v1": {
+            "system": True,
+            "multimodal": False,
+            "tool_call": False,
+            "stream_tool_call": False,
+        },        
+
+        "anthropic.claude-3-5-sonnet-20240620-v1:0": {
+            "system": True,
+            "multimodal": True,
+            "tool_call": True,
+            "stream_tool_call": True,
         },
+        "anthropic.claude-3-sonnet-20240229-v1:0": {
+            "system": True,
+            "multimodal": True,
+            "tool_call": True,
+            "stream_tool_call": True,
+        },
+        "anthropic.claude-3-haiku-20240307-v1:0": {
+            "system": True,
+            "multimodal": True,
+            "tool_call": True,
+            "stream_tool_call": True,
+        },             
         "anthropic.claude-v2:1": {
             "system": True,
             "multimodal": False,
@@ -85,205 +117,7 @@ class BedrockModel(BaseChatModel):
             "tool_call": False,
             "stream_tool_call": False,
         },
-        "anthropic.claude-3-sonnet-20240229-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "anthropic.claude-3-opus-20240229-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "anthropic.claude-3-haiku-20240307-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "anthropic.claude-3-5-sonnet-20240620-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "anthropic.claude-3-5-sonnet-20241022-v2:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "meta.llama2-13b-chat-v1": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "meta.llama2-70b-chat-v1": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "meta.llama3-8b-instruct-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "meta.llama3-70b-instruct-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        # Llama 3.1 8b cross-region inference profile
-        "us.meta.llama3-1-8b-instruct-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "meta.llama3-1-8b-instruct-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        # Llama 3.1 70b cross-region inference profile
-        "us.meta.llama3-1-70b-instruct-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "meta.llama3-1-70b-instruct-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "meta.llama3-1-405b-instruct-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "mistral.mistral-7b-instruct-v0:2": {
-            "system": False,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "mistral.mixtral-8x7b-instruct-v0:1": {
-            "system": False,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "mistral.mistral-small-2402-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": False,
-            "stream_tool_call": False,
-        },
-        "mistral.mistral-large-2402-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": True,
-            "stream_tool_call": False,
-        },
-        "mistral.mistral-large-2407-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": True,
-            "stream_tool_call": False,
-        },
-        "cohere.command-r-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": True,
-            "stream_tool_call": False,
-        },
-        "cohere.command-r-plus-v1:0": {
-            "system": True,
-            "multimodal": False,
-            "tool_call": True,
-            "stream_tool_call": False,
-        },
-        "apac.anthropic.claude-3-sonnet-20240229-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "apac.anthropic.claude-3-haiku-20240307-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "apac.anthropic.claude-3-5-sonnet-20240620-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        # claude 3 Haiku cross-region inference profile
-        "us.anthropic.claude-3-haiku-20240307-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "eu.anthropic.claude-3-haiku-20240307-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        # claude 3 Opus cross-region inference profile
-        "us.anthropic.claude-3-opus-20240229-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        # claude 3 Sonnet cross-region inference profile
-        "us.anthropic.claude-3-sonnet-20240229-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "eu.anthropic.claude-3-sonnet-20240229-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        # claude 3.5 Sonnet cross-region inference profile
-        "us.anthropic.claude-3-5-sonnet-20240620-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        "eu.anthropic.claude-3-5-sonnet-20240620-v1:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
-        # claude 3.5 Sonnet v2 cross-region inference profile(Now only us-west-2)
-        "us.anthropic.claude-3-5-sonnet-20241022-v2:0": {
-            "system": True,
-            "multimodal": True,
-            "tool_call": True,
-            "stream_tool_call": True,
-        },
+
     }
 
     def list_models(self) -> list[str]:
